@@ -31,7 +31,7 @@ We’re focusing on stability, UI fluidity, and script compatibility, making it 
 We’re working on stability, performance, and cross-library compatibility before public release.
 
 ## 💻 Developers
-- **Neo** — Founder, Lead UI & Internal Systems Developer  
+- **Neo** — Founder, Executer & Script Developer
   - Executor UI, .ven language, Premium & Payment Handler, a few hub scripts
 
 - **S0ulz** — Founder, Executer & Script Developer
