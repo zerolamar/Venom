@@ -8,19 +8,19 @@ Whether you’re testing Lua projects, developing your own tools, or using advan
 ## 🧩 Features (in progress)
 The Venom core is still being developed — here’s what’s planned:
 
-🧠 Next-Gen Executor Core – stable execution for complex Lua scripts
+- 🧠 Next-Gen Executor Core – stable execution for complex Lua scripts
 
-🕵️ Universal Script Support – supports your favorite script libraries (Fluent, Rayfield, Kavo, etc.)
+- 🕵️ Universal Script Support – supports your favorite script libraries (Fluent, Rayfield, Kavo, etc.)
 
-💬 In-App Console & Debugging Tools
+- 💬 In-App Console & Debugging Tools
 
-⚙️ Custom UI System – fast, smooth, and minimal
+- ⚙️ Custom UI System – fast, smooth, and minimal
 
-🔒 Safe Mode – prevents detection and crashes
+- 🔒 Safe Mode – prevents detection and crashes
 
-🌍 Script Hub Access – connect directly to verified community scripts
+- 🌍 Script Hub Access – connect directly to verified community scripts
 
-🧰 Developer Utilities – for testing and scripting automation
+- 🧰 Developer Utilities – for testing and scripting automation
 
 ## 🎨 Design Philosophy
 Venom’s UI is built for clarity and speed — no bloat, no lag.
@@ -31,13 +31,14 @@ We’re focusing on stability, UI fluidity, and script compatibility, making it 
 We’re working on stability, performance, and cross-library compatibility before public release.
 
 ## 💻 Developers
-Core Executor: [s0ulz]
+- **Neo** — Founder, Lead UI & Internal Systems Developer  
+  - Executor UI, .ven language, Premium & Payment Handler, a few hub scripts
 
-Executor Desginer : [Neo]
+- **S0ulz** — Founder, Main Developer  
+  - Executor injection, Offsets finder, a few hub scripts
 
-Luau UI & Scripting: [Zorijushi]
-
-Testing Team: Venom Dev Team
+- **Zorji** — Hub & Script Developer  
+  - Hub integration, script authoring
 
 ### 🔗 Links
 💬 Discord: coming soon
