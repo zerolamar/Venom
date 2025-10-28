@@ -34,7 +34,7 @@ We’re working on stability, performance, and cross-library compatibility befor
 - **Neo** — Founder, Lead UI & Internal Systems Developer  
   - Executor UI, .ven language, Premium & Payment Handler, a few hub scripts
 
-- **S0ulz** — Founder, Main Developer  
+- **S0ulz** — Founder, Executer & Script Developer
   - Executor injection, Offsets finder, a few hub scripts
 
 - **Zorji** — Hub & Script Developer  
