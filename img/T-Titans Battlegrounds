@@ -1,0 +1,218 @@
+--// WindUI
+local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+
+--// Window
+local Window = WindUI:CreateWindow({
+    Title = "Venom Hub | T-Titans Battlegrounds",
+    Icon = "user",
+    Author = "by Zorji",
+    Size = UDim2.fromOffset(580, 470),
+    MinSize = Vector2.new(560, 350),
+    MaxSize = Vector2.new(850, 560),
+    Transparent = true,
+    Theme = "Dark",
+    Resizable = true,
+    SideBarWidth = 200,
+    BackgroundImageTransparency = 0.42,
+    HideSearchBar = false,
+    ScrollBarEnabled = false,
+})
+
+--// Mobile toggle
+Window:EditOpenButton({
+    Title = "Venom",
+    Icon = "atom",
+    CornerRadius = UDim.new(0, 8),
+    StrokeThickness = 2,
+    Color = ColorSequence.new(Color3.fromHex("FF0F7B"), Color3.fromHex("F89B29")),
+    OnlyMobile = true,
+    Enabled = true,
+    Draggable = true,
+})
+
+--// Tabs
+local Home = Window:Tab({ Title = "Home", Icon = "house" })
+local Autofarm = Window:Tab({ Title = "Autofarm", Icon = "sword" })
+
+Home:Paragraph({
+    Title = "Welcome to VenomHub",
+    Desc = "🚀 Fast, secure, and stylish\nMade by Zorji",
+    Color = "Red"
+})
+
+Home:Paragraph({
+    Title = "🌹 Copy Discord Invite",
+    Desc = "Join .gg/BP6nAbYNQy, for more leaks.",
+    Color = "Red",
+    Buttons = {
+        {
+            Icon = "bird",
+            Title = "Copy Invite",
+            Callback = function() setclipboard("https://discord.gg/BP6nAbYNQy") end,
+        }
+    }
+})
+
+--// Services
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+--// Autofarm Vars
+local CHARACTER_ID = "001" -- Jet
+local TOOL_NAME = "BoStaff"
+local autofarmEnabled = false
+local currentMode = "Speed"
+local currentTarget = nil
+local attackCooldown = 0.1
+local lastAttack = 0
+
+--// Helper: Select Jet
+local function selectJet()
+    local remote = ReplicatedStorage:FindFirstChild("Remotes") and ReplicatedStorage.Remotes:FindFirstChild("OnCharacterSelectTouchedRF")
+    if remote then
+        pcall(function() remote:InvokeServer(CHARACTER_ID) end)
+    end
+end
+
+--// Equip tool
+local function equipTool()
+    if not LocalPlayer.Character then return nil end
+    local tool = LocalPlayer.Character:FindFirstChild(TOOL_NAME) or LocalPlayer.Backpack:FindFirstChild(TOOL_NAME)
+    if tool and tool.Parent ~= LocalPlayer.Character then
+        tool.Parent = LocalPlayer.Character
+    end
+    return LocalPlayer.Character:FindFirstChild(TOOL_NAME)
+end
+
+--// Get nearest PLAYER only (no ForceField)
+local function getNearestPlayer()
+    local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not root then return nil end
+
+    local nearest, distNearest = nil, math.huge
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("Humanoid") and p.Character:FindFirstChild("HumanoidRootPart") then
+            local hum = p.Character.Humanoid
+            local hrp = p.Character.HumanoidRootPart
+            if hum.Health > 0 and not p.Character:FindFirstChildOfClass("ForceField") then
+                local dist = (hrp.Position - root.Position).Magnitude
+                if dist < distNearest then
+                    nearest, distNearest = p.Character, dist
+                end
+            end
+        end
+    end
+    return nearest
+end
+
+--// Stick to target
+local function stickTarget(target)
+    local char = LocalPlayer.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+    local root = char.HumanoidRootPart
+    local targetHRP = target:FindFirstChild("HumanoidRootPart")
+    if not targetHRP then return end
+
+    if currentMode == "Speed" then
+        root.CFrame = targetHRP.CFrame * CFrame.new(0, -2, 0)
+    elseif currentMode == "Stable" then
+        root.CFrame = targetHRP.CFrame * CFrame.new(0, -6, 0) * CFrame.Angles(math.rad(90), 0, 0)
+    end
+end
+
+--// Attack
+local function attack(tool, target)
+    if tick() - lastAttack < attackCooldown then return end
+    lastAttack = tick()
+    if not tool or not target or not target:FindFirstChild("Humanoid") then return end
+
+    local hum = target.Humanoid
+    if hum.Health <= 0 then return end
+    if target:FindFirstChildOfClass("ForceField") then return end
+
+    pcall(function() tool:Activate() end)
+    for _, v in ipairs(tool:GetDescendants()) do
+        if v:IsA("RemoteEvent") then
+            pcall(function() v:FireServer(hum) end)
+        elseif v:IsA("RemoteFunction") then
+            pcall(function() v:InvokeServer(hum) end)
+        end
+    end
+end
+
+--// Noclip
+local function noclip()
+    local char = LocalPlayer.Character
+    if not char then return end
+    for _, part in ipairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+        end
+    end
+end
+
+--// Autofarm Loop
+RunService.Heartbeat:Connect(function()
+    if not autofarmEnabled then return end
+
+    local char = LocalPlayer.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then
+        selectJet()
+        task.wait(1)
+        return
+    end
+
+    local tool = equipTool()
+    noclip()
+
+    if not currentTarget or not currentTarget:FindFirstChild("Humanoid") or currentTarget.Humanoid.Health <= 0 or currentTarget:FindFirstChildOfClass("ForceField") then
+        currentTarget = getNearestPlayer()
+    end
+
+    if currentTarget then
+        stickTarget(currentTarget)
+        attack(tool, currentTarget)
+    end
+end)
+
+--// Respawn
+LocalPlayer.CharacterAdded:Connect(function()
+    task.wait(1)
+    if autofarmEnabled then
+        selectJet()
+        task.wait(1)
+        equipTool()
+    end
+end)
+
+--// UI Controls
+Autofarm:Toggle({
+    Title = "Enable Autofarm",
+    Desc = "Automatically attacks nearest players only",
+    Icon = "zap",
+    Type = "Checkbox",
+    Value = false,
+    Callback = function(state)
+        autofarmEnabled = state
+        if state then
+            selectJet()
+            task.wait(1)
+            equipTool()
+        else
+            currentTarget = nil
+        end
+    end
+})
+
+Autofarm:Dropdown({
+    Title = "Autofarm Mode",
+    Desc = "Choose attack movement style",
+    Values = { "Speed", "Stable" },
+    Value = "Speed",
+    Callback = function(option)
+        currentMode = option
+    end
+})
+
